@@ -91,7 +91,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		if(currentState > END_STATE){
 			currentState = MENU_STATE;
 		}
-
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			
+		}
 	}
 
 	@Override
