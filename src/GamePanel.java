@@ -20,12 +20,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	int currentState = MENU_STATE;
 	Font titleFont;
 	Font titleF;
+	Rocketship rocket=new Rocketship(250, 700, 50, 50);
+	ObjectManagerFile manager = new ObjectManagerFile();
 	
 	public GamePanel() {
 		// TODO Auto-generated constructor stub
 		this.timer = new Timer(1000 / 60, this);
 		this.titleFont = new Font("Copperplate", Font.PLAIN , 48 );
 		this.titleF = new Font("Optima", Font.PLAIN, 36);
+		manager.addObject(rocket);
 	}
 	public static void main(String[] args) {
 //		String fonts[]=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -51,17 +54,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	void updateGameState() {
-
+	manager.update();
+	manager.manageEnemies();
 	}
 
     void drawGameState(Graphics g){
     	g.setColor(Color.black);
     	g.fillRect(0, 0, LeagueInvaders.width, LeagueInvaders.height);
+    	manager.draw(g);
     	
 	}
 	
 	void updateEndState() {
-
+		
 	}
 	
 	void drawEndState(Graphics g){
@@ -95,7 +100,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		repaint();
+		
 		
 		if(currentState == MENU_STATE){
 			updateMenuState();
@@ -104,7 +109,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}else if(currentState == END_STATE){
 			updateEndState();
 		}
-
+repaint();
 	}
 
 	@Override
@@ -117,14 +122,34 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		System.out.println("keyPressed");
-		
+		System.out.println(e.getKeyCode());
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			currentState++;
 			if(currentState > END_STATE){
 			currentState = MENU_STATE;
+		}}
+			else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			System.out.println("RightKeyPressed");
+				rocket.moveRight();
 		}
-
-		}
+			else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				System.out.println("LeftKeyPressed");
+					rocket.moveLeft();
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				System.out.println("DownKeyPressed");
+					rocket.moveDown();
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_UP) {
+				System.out.println("UpKeyPressed");
+					rocket.moveUp();
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				System.out.println("PEW PEW PEW!!");
+			manager.addObject(new Projectile(rocket.x+20, rocket.y, 10, 10));
+			}
+		
+		updateGameState();
 					}
 
 	@Override

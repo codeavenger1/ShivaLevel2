@@ -5,6 +5,7 @@ int x;
 int y;
 int width;
 int height;
+boolean isAlive = true;
 	public GameObject() {
 		// TODO Auto-generated constructor stub
 	}
