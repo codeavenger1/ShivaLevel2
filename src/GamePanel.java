@@ -1,16 +1,17 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
-import sun.applet.Main;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Timer timer;
@@ -22,13 +23,25 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Font titleF;
 	Rocketship rocket=new Rocketship(250, 700, 50, 50);
 	ObjectManagerFile manager = new ObjectManagerFile();
-	
+	public static BufferedImage alienImg;
+	public static BufferedImage rocketImg;
+	public static BufferedImage bulletImg;
 	public GamePanel() {
 		// TODO Auto-generated constructor stub
 		this.timer = new Timer(1000 / 60, this);
 		this.titleFont = new Font("Copperplate", Font.PLAIN , 48 );
 		this.titleF = new Font("Optima", Font.PLAIN, 36);
 		manager.addObject(rocket);
+		
+		try {
+			alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
+			rocketImg = ImageIO.read(this.getClass().getResourceAsStream("rocket.png"));
+			bulletImg = ImageIO.read(this.getClass().getResourceAsStream("bullet.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	public static void main(String[] args) {
 //		String fonts[]=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -56,6 +69,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	void updateGameState() {
 	manager.update();
 	manager.manageEnemies();
+	manager.checkCollision();
+	if (!rocket.isAlive) {
+		currentState = END_STATE;
+		manager.reset();
+		rocket = new Rocketship(250, 700, 50, 50);
+		manager.addObject(rocket);
+	}
 	}
 
     void drawGameState(Graphics g){
@@ -77,7 +97,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.drawString("GAME OVER :(", 20, 250);
 		g.setFont(titleF);
 		g.setColor(Color.yellow);
-		g.drawString("You killed 0 aliens.", 20, 350);
+		g.drawString("You killed " + manager.getScore()+ " aliens.", 20, 350);
 		g.setColor(Color.yellow);
 		g.drawString("Press BACKSPACE to restart", 20, 450);
 	}
@@ -148,7 +168,14 @@ repaint();
 				System.out.println("PEW PEW PEW!!");
 			manager.addObject(new Projectile(rocket.x+20, rocket.y, 10, 10));
 			}
-		
+			else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+				currentState = GAME_STATE;
+	
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+				currentState = MENU_STATE;
+				JOptionPane.showMessageDialog(null, "OH NO! The Aliens are here! Help save the planet! \n Use the arrow keys to move the rocketship. Press space to fire and kill the Aliens. \n  Hurry...before time runs out!");
+			}
 		updateGameState();
 					}
 

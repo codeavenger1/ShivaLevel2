@@ -8,6 +8,7 @@ public static void main(String[] args) {
 }
 public Projectile(int x,int y,int width, int height) {
 	// TODO Auto-generated constructor stub
+	super();
 	this.x = x;
 	this.y = y;
 	this.width = width;
@@ -22,8 +23,7 @@ void update(){
 	}
 	}
 void draw(Graphics g){
-	g.setColor(Color.RED);
-	g.fillRect(x, y, width, height);
+	g.drawImage(GamePanel.bulletImg, x, y, width, height, null);
 
 }
 }
